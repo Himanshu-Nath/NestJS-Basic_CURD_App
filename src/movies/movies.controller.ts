@@ -1,6 +1,9 @@
-import { Controller, Get, Post, Put, Delete, Query, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Query, Param, Body } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common';
 import { MoviesService } from './movies.service';
+import { CreateMovieDTO } from './dto/create-movie.dto';
+import { UpdateMovieDTO } from './dto/update-user.dto';
+
 
 @Controller('movies')
 export class MoviesController {
@@ -30,18 +33,29 @@ export class MoviesController {
         return { status: true, data}
     }
 
-    @Post()
-    createMovie() {
-
+    // POST /movies/add
+    @Post('add')
+    async createMovie(
+        @Body() createMovieDTO: CreateMovieDTO
+    ) {
+        const data =  await this.moviesService.createMovie(createMovieDTO)
+        return { status: true, data}
     }
 
     @Put(':id')
-    updateMovieById() {
+    async updateMovieById(
+        @Param('id') id: string,
+        @Body() updateMovieDTO: UpdateMovieDTO
+    ) {
 
     }
 
+    // DELETE http://127.0.0.1:3000/movies/69d3f9d3513ad35084968cac
     @Delete(':id')
-    deleteMovieById() {
-
+    async deleteMovieById(
+        @Param('id') id: string
+    ) {
+        const data =  await this.moviesService.deleteMovie(id)
+        return { status: true, data}
     }
 }
