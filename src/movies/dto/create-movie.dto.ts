@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, IsNumber, MinLength, IsArray, IsDate } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, IsNumber, MinLength, IsArray, IsDate,IsOptional } from "class-validator";
 import { Type } from "class-transformer";
 
 export class CreateMovieDTO {
@@ -18,6 +18,9 @@ export class CreateMovieDTO {
     @IsString()
     fullplot: string;
 
+    @IsString()
+    poster: string;
+
     @IsNumber()
     runtime: number;
 
@@ -33,6 +36,14 @@ export class CreateMovieDTO {
     @IsString({ each: true })
     directors: string[];
 
+    @IsArray()
+    @IsString({ each: true })
+    languages: string[];
+
+    @IsArray()
+    @IsString({ each: true })
+    writers: string[];
+
     @IsString()
     rated: string;
 
@@ -46,18 +57,21 @@ export class CreateMovieDTO {
     @IsNumber()
     num_mflix_comments: number;
 
+    @IsOptional()
     awards: {
         wins: number;
         nominations: number;
         text: string;
     };
 
+    @IsOptional()
     imdb: {
         rating: number;
         votes: number;
         id: number;
     };
 
+    @IsOptional()
     tomatoes: {
         viewer: {
         rating: number;

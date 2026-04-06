@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { InternalServerErrorException, NotFoundException, ConflictException  } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { InternalServerErrorException, NotFoundException, ConflictException, BadRequestException  } from '@nestjs/common';
+import { Model, Types } from 'mongoose';
 import { Movie } from './movies.schema';
+import { Type } from 'class-transformer';
 
 @Injectable()
 export class MoviesService {
@@ -28,15 +29,15 @@ export class MoviesService {
     }
 
     async getMovieById(id: string) {
-        try{
-            const movie  = await this.moviesModel.findById(id);
-            if(!movie) {
-                throw new NotFoundException(`No Movie found with id ${id}`);
-            }
-            return movie;
-        } catch(err) {
-            throw new InternalServerErrorException('Failed to fetch Movie by Id', err)
+        // You can actually remove try/catch entirely and let NestJS handle errors:
+        if(!Types.ObjectId.isValid(id)) {
+            throw new BadRequestException('Invalid movie ID');
         }
+        const movie  = await this.moviesModel.findById(id).exec();
+        if(!movie) {
+            throw new NotFoundException(`No Movie found with id ${id}`);
+        }
+        return movie;
     }
 
     async createMovie(createMovieDTO) {
@@ -57,17 +58,10 @@ export class MoviesService {
 
     async deleteMovie(id) {
         // You can actually remove try/catch entirely and let NestJS handle errors:
-        try {
-            const movie  = await this.moviesModel.findByIdAndDelete(id).exec();
-            if(!movie) {
-                throw new NotFoundException(`No Movie found with id ${id}`);
-            }
-            return movie;
-        } catch(err) {
-            if (err instanceof NotFoundException) {
-                throw err;
-            }
-            throw new InternalServerErrorException('Failed to delete Movie by Id', err)
+        const movie  = await this.moviesModel.findByIdAndDelete(id).exec();
+        if(!movie) {
+            throw new NotFoundException(`No Movie found with id ${id}`);
         }
+        return movie;        
     }
 }

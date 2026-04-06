@@ -17,8 +17,7 @@ export class MoviesController {
     ) {
         limit = limit || 25;
         skip = skip || 0;
-        const data = await this.moviesService.getAllMovie(limit, skip);
-        return { success: true, ...data };
+        return await this.moviesService.getAllMovie(limit, skip);
     }
 
     // GET /movies/<ID>
@@ -27,10 +26,9 @@ export class MoviesController {
         @Param('id') id: string
     ) {
         if(!id) {
-            throw new NotFoundException('No movies found')
+            throw new NotFoundException('No movies ID found');
         }
-        const data = await this.moviesService.getMovieById(id);
-        return { status: true, data}
+        return await this.moviesService.getMovieById(id);
     }
 
     // POST /movies/add
@@ -38,8 +36,7 @@ export class MoviesController {
     async createMovie(
         @Body() createMovieDTO: CreateMovieDTO
     ) {
-        const data =  await this.moviesService.createMovie(createMovieDTO)
-        return { status: true, data}
+        return await this.moviesService.createMovie(createMovieDTO);
     }
 
     @Put(':id')
@@ -55,7 +52,6 @@ export class MoviesController {
     async deleteMovieById(
         @Param('id') id: string
     ) {
-        const data =  await this.moviesService.deleteMovie(id)
-        return { status: true, data}
+        return await this.moviesService.deleteMovie(id);
     }
 }
